@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peony's Product & Vouch Tracker</title>
+    <title>Peony's Product & Vouch Tracker - Admin Login</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
@@ -22,7 +22,7 @@
 
         /* Glassmorphism & Glowing Pink Borders optimized for mobile & desktop */
         .glass-card {
-            background: rgba(35, 20, 30, 0.7);
+            background: rgba(35, 20, 30, 0.75);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(244, 114, 182, 0.35);
@@ -37,7 +37,7 @@
 
         /* Glowing Header/Footer Glass */
         .glass-nav {
-            background: rgba(25, 12, 20, 0.8);
+            background: rgba(25, 12, 20, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(244, 114, 182, 0.3);
@@ -53,97 +53,138 @@
 </head>
 <body class="text-pink-100 min-h-screen flex flex-col selection:bg-pink-500 selection:text-white">
 
-    <!-- Header -->
-    <header class="glass-nav sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <div class="bg-gradient-to-tr from-pink-600 to-rose-400 p-2.5 rounded-xl text-white shadow-lg shadow-pink-500/30">
-                    <i class="fa-solid fa-gem text-xl"></i>
-                </div>
+    <!-- ================= LOGIN SCREEN ================= -->
+    <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+        <div class="glass-card rounded-3xl w-full max-w-md p-8 shadow-2xl border border-pink-500/40 text-center space-y-6">
+            <div class="inline-flex bg-gradient-to-tr from-pink-600 to-rose-400 p-3.5 rounded-2xl text-white shadow-lg shadow-pink-500/30">
+                <i class="fa-solid fa-lock text-2xl"></i>
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold tracking-wide text-pink-200">Admin Portal</h2>
+                <p class="text-xs text-pink-300/70 mt-1">Enter your password to access Peony's Tracker</p>
+            </div>
+            <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
                 <div>
-                    <h1 class="text-xl font-bold tracking-wide text-pink-200">Peony's Tracker</h1>
-                    <p class="text-xs text-pink-300/70">Products, Sales & Vouch Monitoring</p>
+                    <label class="block text-xs font-medium text-pink-300/80 mb-1">Admin Password</label>
+                    <div class="relative">
+                        <input type="password" id="loginPassword" required placeholder="Enter password..." class="w-full bg-black/40 border border-pink-500/30 rounded-xl px-4 py-3 text-sm text-pink-100 placeholder-pink-300/40 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400 transition">
+                    </div>
+                </div>
+                <div id="loginError" class="text-xs text-rose-400 hidden">Incorrect password. Please try again.</div>
+                <button type="submit" class="w-full bg-gradient-to-r from-pink-600 to-rose-500 hover:from-pink-500 hover:to-rose-400 text-white font-medium py-3 rounded-xl text-sm transition shadow-lg shadow-pink-600/30 border border-pink-400/40 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Login to Dashboard
+                </button>
+            </form>
+            <div class="text-xs text-pink-300/50 pt-2">
+                Telegram: <a href="https://t.me/peony03" target="_blank" class="text-sky-300 hover:underline">@peony03</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MAIN DASHBOARD (Hidden until logged in) ================= -->
+    <div id="mainDashboard" class="hidden flex-col min-h-screen">
+        <!-- Header -->
+        <header class="glass-nav sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-gradient-to-tr from-pink-600 to-rose-400 p-2.5 rounded-xl text-white shadow-lg shadow-pink-500/30">
+                        <i class="fa-solid fa-gem text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold tracking-wide text-pink-200">Peony's Tracker</h1>
+                        <p class="text-xs text-pink-300/70">Products, Sales & Vouch Monitoring</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                    <a href="https://t.me/peony03" target="_blank" class="bg-gradient-to-r from-sky-400 to-sky-500 hover:from-sky-500 hover:to-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center gap-2 shadow-md shadow-sky-500/30 border border-sky-300/30">
+                        <i class="fa-brands fa-telegram text-lg"></i> @peony03
+                    </a>
+                    <button onclick="exportData()" class="glass-card hover:bg-pink-900/40 text-pink-200 px-3 py-2 rounded-xl text-sm font-medium transition flex items-center gap-1.5" title="Export Backup">
+                        <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Backup</span>
+                    </button>
+                    <button onclick="handleLogout()" class="bg-rose-950/60 hover:bg-rose-900 text-rose-200 border border-rose-500/30 px-3 py-2 rounded-xl text-sm font-medium transition flex items-center gap-1.5" title="Logout">
+                        <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline">Logout</span>
+                    </button>
                 </div>
             </div>
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-                <a href="https://t.me/peony03" target="_blank" class="bg-gradient-to-r from-sky-400 to-sky-500 hover:from-sky-500 hover:to-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center gap-2 shadow-md shadow-sky-500/30 border border-sky-300/30">
-                    <i class="fa-brands fa-telegram text-lg"></i> @peony03
-                </a>
-                <button onclick="exportData()" class="glass-card hover:bg-pink-900/40 text-pink-200 px-3 py-2 rounded-xl text-sm font-medium transition flex items-center gap-1.5" title="Export Backup">
-                    <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Backup</span>
-                </button>
-            </div>
-        </div>
-    </header>
+        </header>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+        <!-- Main Container -->
+        <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
 
-        <!-- Stat Summary Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="glass-card p-4 rounded-2xl">
-                <p class="text-xs text-pink-300/70 font-medium">Onhand Products</p>
-                <h3 id="stat-onhand" class="text-2xl font-bold text-pink-300 mt-1">0</h3>
-            </div>
-            <div class="glass-card p-4 rounded-2xl">
-                <p class="text-xs text-pink-300/70 font-medium">Sold Items</p>
-                <h3 id="stat-sold" class="text-2xl font-bold text-rose-300 mt-1">0</h3>
-            </div>
-            <div class="glass-card p-4 rounded-2xl">
-                <p class="text-xs text-pink-300/70 font-medium">Pending Orders</p>
-                <h3 id="stat-pending" class="text-2xl font-bold text-amber-300 mt-1">0</h3>
-            </div>
-            <div class="glass-card p-4 rounded-2xl">
-                <p class="text-xs text-pink-300/70 font-medium">Total Vouches</p>
-                <h3 id="stat-vouches" class="text-2xl font-bold text-pink-400 mt-1">0</h3>
-            </div>
-        </div>
-
-        <!-- Navigation Tabs -->
-        <div class="flex border-b border-pink-500/20 overflow-x-auto scrollbar-none">
-            <button onclick="switchTab('onhand')" id="tab-btn-onhand" class="tab-btn px-6 py-3 font-semibold text-sm border-b-2 border-pink-400 text-pink-300 whitespace-nowrap transition flex items-center gap-2">
-                <i class="fa-solid fa-box-open"></i> Onhand Products
-            </button>
-            <button onclick="switchTab('sold')" id="tab-btn-sold" class="tab-btn px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-pink-300/60 hover:text-pink-200 whitespace-nowrap transition flex items-center gap-2">
-                <i class="fa-solid fa-circle-check"></i> Sold Items
-            </button>
-            <button onclick="switchTab('pending')" id="tab-btn-pending" class="tab-btn px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-pink-300/60 hover:text-pink-200 whitespace-nowrap transition flex items-center gap-2">
-                <i class="fa-solid fa-clock"></i> Pending Orders
-            </button>
-            <button onclick="switchTab('vouches')" id="tab-btn-vouches" class="tab-btn px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-pink-300/60 hover:text-pink-200 whitespace-nowrap transition flex items-center gap-2">
-                <i class="fa-solid fa-star"></i> Vouches & Proofs
-            </button>
-        </div>
-
-        <!-- TAB CONTENT CONTAINER -->
-        <div class="glass-card rounded-2xl p-5 shadow-2xl">
-            
-            <!-- CONTROLS & ADD BUTTON -->
-            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-                <div class="w-full sm:w-72">
-                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search records..." class="w-full bg-black/40 border border-pink-500/30 rounded-xl px-4 py-2 text-sm text-pink-100 placeholder-pink-300/40 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400 transition">
+            <!-- Stat Summary Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="glass-card p-4 rounded-2xl">
+                    <p class="text-xs text-pink-300/70 font-medium">Onhand Products</p>
+                    <h3 id="stat-onhand" class="text-2xl font-bold text-pink-300 mt-1">0</h3>
                 </div>
-                <button onclick="openModal()" class="w-full sm:w-auto bg-gradient-to-r from-pink-600 to-rose-500 hover:from-pink-500 hover:to-rose-400 text-white font-medium px-5 py-2.5 rounded-xl text-sm transition shadow-lg shadow-pink-600/30 flex items-center justify-center gap-2 border border-pink-400/40">
-                    <i class="fa-solid fa-plus"></i> Add New Record
+                <div class="glass-card p-4 rounded-2xl">
+                    <p class="text-xs text-pink-300/70 font-medium">Sold Items</p>
+                    <h3 id="stat-sold" class="text-2xl font-bold text-rose-300 mt-1">0</h3>
+                </div>
+                <div class="glass-card p-4 rounded-2xl">
+                    <p class="text-xs text-pink-300/70 font-medium">Pending Orders</p>
+                    <h3 id="stat-pending" class="text-2xl font-bold text-amber-300 mt-1">0</h3>
+                </div>
+                <div class="glass-card p-4 rounded-2xl">
+                    <p class="text-xs text-pink-300/70 font-medium">Total Vouches</p>
+                    <h3 id="stat-vouches" class="text-2xl font-bold text-pink-400 mt-1">0</h3>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="flex border-b border-pink-500/20 overflow-x-auto scrollbar-none">
+                <button onclick="switchTab('onhand')" id="tab-btn-onhand" class="tab-btn px-6 py-3 font-semibold text-sm border-b-2 border-pink-400 text-pink-300 whitespace-nowrap transition flex items-center gap-2">
+                    <i class="fa-solid fa-box-open"></i> Onhand Products
+                </button>
+                <button onclick="switchTab('sold')" id="tab-btn-sold" class="tab-btn px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-pink-300/60 hover:text-pink-200 whitespace-nowrap transition flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check"></i> Sold Items
+                </button>
+                <button onclick="switchTab('pending')" id="tab-btn-pending" class="tab-btn px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-pink-300/60 hover:text-pink-200 whitespace-nowrap transition flex items-center gap-2">
+                    <i class="fa-solid fa-clock"></i> Pending Orders
+                </button>
+                <button onclick="switchTab('vouches')" id="tab-btn-vouches" class="tab-btn px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-pink-300/60 hover:text-pink-200 whitespace-nowrap transition flex items-center gap-2">
+                    <i class="fa-solid fa-star"></i> Vouches & Proofs
                 </button>
             </div>
 
-            <!-- TABLE VIEW -->
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse" id="mainTable">
-                    <thead>
-                        <tr id="tableHeaders" class="border-b border-pink-500/20 text-xs font-semibold text-pink-300/70 uppercase tracking-wider">
-                            <!-- Dynamically populated headers -->
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody" class="divide-y divide-pink-500/10 text-sm text-pink-100/90">
-                        <!-- Dynamically populated rows -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
+            <!-- TAB CONTENT CONTAINER -->
+            <div class="glass-card rounded-2xl p-5 shadow-2xl">
+                
+                <!-- CONTROLS & ADD BUTTON -->
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                    <div class="w-full sm:w-72">
+                        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search records..." class="w-full bg-black/40 border border-pink-500/30 rounded-xl px-4 py-2 text-sm text-pink-100 placeholder-pink-300/40 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400 transition">
+                    </div>
+                    <button onclick="openModal()" class="w-full sm:w-auto bg-gradient-to-r from-pink-600 to-rose-500 hover:from-pink-500 hover:to-rose-400 text-white font-medium px-5 py-2.5 rounded-xl text-sm transition shadow-lg shadow-pink-600/30 flex items-center justify-center gap-2 border border-pink-400/40">
+                        <i class="fa-solid fa-plus"></i> Add New Record
+                    </button>
+                </div>
 
-    </main>
+                <!-- TABLE VIEW -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse" id="mainTable">
+                        <thead>
+                            <tr id="tableHeaders" class="border-b border-pink-500/20 text-xs font-semibold text-pink-300/70 uppercase tracking-wider">
+                                <!-- Dynamically populated headers -->
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-pink-500/10 text-sm text-pink-100/90">
+                            <!-- Dynamically populated rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="glass-nav py-4 mt-auto">
+            <div class="max-w-7xl mx-auto px-4 text-center text-xs text-pink-300/70">
+                Peony's Product & Vouch Tracker &bull; Contact Telegram <a href="https://t.me/peony03" target="_blank" class="text-sky-300 font-medium hover:underline">@peony03</a>
+            </div>
+        </footer>
+    </div>
 
     <!-- MODAL FORM -->
     <div id="recordModal" class="fixed inset-0 bg-black/70 backdrop-blur-md hidden items-center justify-center p-4 z-50">
@@ -184,15 +225,48 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="glass-nav py-4 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-pink-300/70">
-            Peony's Product & Vouch Tracker &bull; Contact Telegram <a href="https://t.me/peony03" target="_blank" class="text-sky-300 font-medium hover:underline">@peony03</a>
-        </div>
-    </footer>
-
     <!-- Script Application Logic -->
     <script>
+        // ======= ADMIN LOGIN CONFIG =======
+        // PALITAN MO DITO ANG PASSWORD MO KUNG GUSTO MO (Default: peony03)
+        const ADMIN_PASSWORD = "peony03"; 
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('loginPassword').value;
+            const errorEl = document.getElementById('loginError');
+
+            if (pass === ADMIN_PASSWORD) {
+                sessionStorage.setItem('peony_admin_logged', 'true');
+                document.getElementById('loginScreen').classList.add('hidden');
+                const mainDash = document.getElementById('mainDashboard');
+                mainDash.classList.remove('hidden');
+                mainDash.classList.add('flex');
+                renderTable();
+            } else {
+                errorEl.classList.remove('hidden');
+                document.getElementById('loginPassword').value = '';
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('peony_admin_logged');
+            location.reload();
+        }
+
+        // Check login status on page load
+        window.onload = () => {
+            const isLogged = sessionStorage.getItem('peony_admin_logged');
+            if (isLogged === 'true') {
+                document.getElementById('loginScreen').classList.add('hidden');
+                const mainDash = document.getElementById('mainDashboard');
+                mainDash.classList.remove('hidden');
+                mainDash.classList.add('flex');
+                renderTable();
+            }
+        };
+
+        // ======= TRACKER DATABASE LOGIC =======
         let currentTab = 'onhand';
         
         let db = JSON.parse(localStorage.getItem('peony_tracker_db')) || {
@@ -245,7 +319,8 @@
         function renderTable() {
             const headers = document.getElementById('tableHeaders');
             const tbody = document.getElementById('tableBody');
-            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const searchInput = document.getElementById('searchInput');
+            const searchVal = searchInput ? searchInput.value.toLowerCase() : '';
 
             let extraTitle = 'Notes';
             if (currentTab === 'sold') extraTitle = 'Buyer';
@@ -365,10 +440,6 @@
             dlAnchorElem.setAttribute("download", "peony_tracker_backup.json");
             dlAnchorElem.click();
         }
-
-        window.onload = () => {
-            renderTable();
-        };
     </script>
 </body>
 </html>
