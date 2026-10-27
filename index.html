@@ -12,33 +12,36 @@
     <style>
         body { 
             font-family: 'Poppins', sans-serif;
-            /* Background image setup with dark overlay for readability */
-            background: linear-gradient(to bottom, rgba(20, 10, 15, 0.75), rgba(30, 15, 22, 0.85)), 
-                        url('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
+            /* Responsive background image with dark overlay and your GitHub raw link */
+            background: linear-gradient(to bottom, rgba(20, 10, 15, 0.7), rgba(30, 15, 22, 0.85)), 
+                        url('https://raw.githubusercontent.com/mainemail021415-coder/product-tracker/refs/heads/main/bg.jpg') no-repeat center center fixed;
             background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
 
-        /* Glassmorphism & Glowing Borders */
+        /* Glassmorphism & Glowing Pink Borders optimized for mobile & desktop */
         .glass-card {
-            background: rgba(35, 20, 30, 0.65);
+            background: rgba(35, 20, 30, 0.7);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(244, 114, 182, 0.3);
-            box-shadow: 0 0 15px rgba(244, 114, 182, 0.15), inset 0 0 15px rgba(244, 114, 182, 0.05);
+            border: 1px solid rgba(244, 114, 182, 0.35);
+            box-shadow: 0 0 15px rgba(244, 114, 182, 0.2), inset 0 0 15px rgba(244, 114, 182, 0.05);
             transition: all 0.3s ease;
         }
 
         .glass-card:hover {
-            border-color: rgba(244, 114, 182, 0.6);
-            box-shadow: 0 0 25px rgba(244, 114, 182, 0.35), inset 0 0 20px rgba(244, 114, 182, 0.1);
+            border-color: rgba(244, 114, 182, 0.65);
+            box-shadow: 0 0 25px rgba(244, 114, 182, 0.4), inset 0 0 20px rgba(244, 114, 182, 0.1);
         }
 
         /* Glowing Header/Footer Glass */
         .glass-nav {
-            background: rgba(25, 12, 20, 0.75);
+            background: rgba(25, 12, 20, 0.8);
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(244, 114, 182, 0.25);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(244, 114, 182, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
 
         /* Custom Scrollbar */
@@ -62,12 +65,12 @@
                     <p class="text-xs text-pink-300/70">Products, Sales & Vouch Monitoring</p>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
                 <a href="https://t.me/peony03" target="_blank" class="bg-gradient-to-r from-sky-400 to-sky-500 hover:from-sky-500 hover:to-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center gap-2 shadow-md shadow-sky-500/30 border border-sky-300/30">
                     <i class="fa-brands fa-telegram text-lg"></i> @peony03
                 </a>
                 <button onclick="exportData()" class="glass-card hover:bg-pink-900/40 text-pink-200 px-3 py-2 rounded-xl text-sm font-medium transition flex items-center gap-1.5" title="Export Backup">
-                    <i class="fa-solid fa-download"></i> Backup
+                    <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Backup</span>
                 </button>
             </div>
         </div>
@@ -118,7 +121,7 @@
             <!-- CONTROLS & ADD BUTTON -->
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
                 <div class="w-full sm:w-72">
-                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search records..." class="w-full bg-black/30 border border-pink-500/30 rounded-xl px-4 py-2 text-sm text-pink-100 placeholder-pink-300/40 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400 transition">
+                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search records..." class="w-full bg-black/40 border border-pink-500/30 rounded-xl px-4 py-2 text-sm text-pink-100 placeholder-pink-300/40 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400 transition">
                 </div>
                 <button onclick="openModal()" class="w-full sm:w-auto bg-gradient-to-r from-pink-600 to-rose-500 hover:from-pink-500 hover:to-rose-400 text-white font-medium px-5 py-2.5 rounded-xl text-sm transition shadow-lg shadow-pink-600/30 flex items-center justify-center gap-2 border border-pink-400/40">
                     <i class="fa-solid fa-plus"></i> Add New Record
@@ -360,7 +363,7 @@
             const dlAnchorElem = document.createElement('a');
             dlAnchorElem.setAttribute("href", dataStr);
             dlAnchorElem.setAttribute("download", "peony_tracker_backup.json");
-            dlCommand = dlAnchorElem.click();
+            dlAnchorElem.click();
         }
 
         window.onload = () => {
