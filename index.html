@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { 
             font-family: 'Poppins', sans-serif;
@@ -44,6 +44,20 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
 
+        /* Highlighted Bubble Font Style with Glowing Effect */
+        .bubble-glow-text {
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff5f7 0%, #ffc0cb 50%, #ff69b4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 
+                0 0 10px rgba(255, 105, 180, 0.8),
+                0 0 20px rgba(255, 182, 193, 0.6),
+                2px 2px 0px #b72061,
+                -2px -2px 0px #ffb6c1;
+            letter-spacing: 1.5px;
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: rgba(20, 10, 15, 0.5); }
@@ -58,7 +72,7 @@
         <div class="glass-card rounded-3xl w-full max-w-md p-8 shadow-2xl border border-pink-500/40 text-center space-y-6">
             <div class="flex justify-center">
                 <!-- Logo inside Login -->
-                <img src="https://raw.githubusercontent.com/mainemail021415-coder/product-tracker/refs/heads/main/logo%20(2).png" alt="Shop Book Logo" class="h-16 object-contain drop-shadow-[0_0_10px_rgba(244,114,182,0.5)]">
+                <img src="https://raw.githubusercontent.com/mainemail021415-coder/product-tracker/refs/heads/main/logo%20(2).png" alt="Shop Book Logo" class="h-20 object-contain drop-shadow-[0_0_12px_rgba(244,114,182,0.6)]">
             </div>
             <div>
                 <h2 class="text-2xl font-bold tracking-wide text-pink-200">Admin Portal</h2>
@@ -87,9 +101,11 @@
         <!-- Header -->
         <header class="glass-nav sticky top-0 z-40">
             <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div class="flex items-center space-x-3">
-                    <!-- Website Logo Image -->
-                    <img src="https://raw.githubusercontent.com/mainemail021415-coder/product-tracker/refs/heads/main/logo%20(2).png" alt="Shop Book Logo" class="h-10 sm:h-12 object-contain drop-shadow-[0_0_8px_rgba(244,114,182,0.4)]">
+                <div class="flex items-center space-x-4">
+                    <!-- Website Logo Image (Mas pinakalaking size) -->
+                    <img src="https://raw.githubusercontent.com/mainemail021415-coder/product-tracker/refs/heads/main/logo%20(2).png" alt="Shop Book Logo" class="h-14 sm:h-16 object-contain drop-shadow-[0_0_10px_rgba(244,114,182,0.5)]">
+                    <!-- Monitorings Bubble Glowing Text -->
+                    <span class="bubble-glow-text text-lg sm:text-2xl tracking-wider uppercase drop-shadow-lg">Monitorings</span>
                 </div>
                 <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
                     <a href="https://t.me/peony03" target="_blank" class="bg-gradient-to-r from-sky-400 to-sky-500 hover:from-sky-500 hover:to-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center gap-2 shadow-md shadow-sky-500/30 border border-sky-300/30">
