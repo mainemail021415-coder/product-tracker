@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product & Vouch Tracker Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-800 border-b border-slate-700 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2.5 rounded-xl text-white shadow-md shadow-indigo-500/20">
+                    <i class="fa-solid fa-boxes-stacked text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wide">Product & Vouch Tracker</h1>
+                    <p class="text-xs text-slate-400">Monitoring & Records System</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="https://t.me/peony03" target="_blank" class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-md shadow-sky-500/20">
+                    <i class="fa-brands fa-telegram"></i> @peony03
+                </a>
+                <button onclick="exportData()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5" title="Export Backup">
+                    <i class="fa-solid fa-download"></i> Backup
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+
+        <!-- Stat Summary Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-sm">
+                <p class="text-xs text-slate-400 font-medium">Onhand Products</p>
+                <h3 id="stat-onhand" class="text-2xl font-bold text-indigo-400 mt-1">0</h3>
+            </div>
+            <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-sm">
+                <p class="text-xs text-slate-400 font-medium">Sold Items</p>
+                <h3 id="stat-sold" class="text-2xl font-bold text-emerald-400 mt-1">0</h3>
+            </div>
+            <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-sm">
+                <p class="text-xs text-slate-400 font-medium">Pending Orders</p>
+                <h3 id="stat-pending" class="text-2xl font-bold text-amber-400 mt-1">0</h3>
+            </div>
+            <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-sm">
+                <p class="text-xs text-slate-400 font-medium">Total Vouches</p>
+                <h3 id="stat-vouches" class="text-2xl font-bold text-rose-400 mt-1">0</h3>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-slate-700 overflow-x-auto scrollbar-none">
+            <button onclick="switchTab('onhand')" id="tab-btn-onhand" class="tab-btn px-6 py-3 font-semibold text-sm border-b-2 border-indigo-500 text-indigo-400 whitespace-nowrap transition flex items-center gap-2">
+                <i class="fa-solid fa-box"></i> Onhand Products
+            </button>
+            <button onclick="switchTab('sold')" id="tab-btn-sold" class="tab-btn px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition flex items-center gap-2">
+                <i class="fa-solid fa-circle-check"></i> Sold Items
+            </button>
+            <button onclick="switchTab('pending')" id="tab-btn-pending" class="tab-btn px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition flex items-center gap-2">
+                <i class="fa-solid fa-clock"></i> Pending Orders
+            </button>
+            <button onclick="switchTab('vouches')" id="tab-btn-vouches" class="tab-btn px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition flex items-center gap-2">
+                <i class="fa-solid fa-star"></i> Vouches & Proofs
+            </button>
+        </div>
+
+        <!-- TAB CONTENT CONTAINER -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg">
+            
+            <!-- CONTROLS & ADD BUTTON -->
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                <div class="w-full sm:w-72">
+                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search records..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition">
+                </div>
+                <button onclick="openModal()" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2 rounded-lg text-sm transition shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Add New Record
+                </button>
+            </div>
+
+            <!-- TABLE VIEW -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse" id="mainTable">
+                    <thead>
+                        <tr id="tableHeaders" class="border-b border-slate-700 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                            <!-- Dynamically populated headers -->
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-700/50 text-sm text-slate-300">
+                        <!-- Dynamically populated rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL FORM -->
+    <div id="recordModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+            <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+                <h3 id="modalTitle" class="font-bold text-lg text-slate-100">Add Record</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="recordForm" onsubmit="saveRecord(event)" class="p-6 space-y-4">
+                <input type="hidden" id="editIndex">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Product / Item Name</label>
+                    <input type="text" id="f-name" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Quantity / Details</label>
+                        <input type="text" id="f-qty" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="e.g. 5 pcs / Size M">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Price / Amount (₱)</label>
+                        <input type="number" step="0.01" id="f-price" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="0.00">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1" id="label-extra">Customer / Notes / Reference</label>
+                    <input type="text" id="f-extra" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Customer name or vouch proof link">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Date</label>
+                    <input type="date" id="f-date" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2 rounded-lg text-sm font-medium transition">Cancel</button>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-lg text-sm font-medium transition shadow-md shadow-indigo-600/20">Save Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 border-t border-slate-700 py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400">
+            Product & Vouch Tracker Dashboard &bull; Managed via Telegram <a href="https://t.me/peony03" target="_blank" class="text-sky-400 font-medium hover:underline">@peony03</a>
+        </div>
+    </footer>
+
+    <!-- Script Application Logic -->
+    <script>
+        let currentTab = 'onhand';
+        
+        // Initial Data Structure stored in localStorage
+        let db = JSON.parse(localStorage.getItem('peony_tracker_db')) || {
+            onhand: [
+                { name: 'Sample Item A', qty: '10 pcs', price: 250, extra: 'Main Stock', date: '2026-10-27' }
+            ],
+            sold: [
+                { name: 'Sample Item B', qty: '2 pcs', price: 500, extra: 'Juan Dela Cruz', date: '2026-10-26' }
+            ],
+            pending: [
+                { name: 'Sample Item C', qty: '1 pc', price: 350, extra: 'Maria Santos (Deposit Paid)', date: '2026-10-27' }
+            ],
+            vouches: [
+                { name: 'Legit Seller Vouch', qty: 'Fast Deal', price: 0, extra: 'https://t.me/peony03', date: '2026-10-25' }
+            ]
+        };
+
+        function saveDataToStorage() {
+            localStorage.setItem('peony_tracker_db', JSON.stringify(db));
+            renderTable();
+            updateStats();
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-indigo-500', 'text-indigo-400');
+                btn.classList.add('border-transparent', 'text-slate-400');
+            });
+            const activeBtn = document.getElementById(`tab-btn-${tab}`);
+            activeBtn.classList.remove('border-transparent', 'text-slate-400');
+            activeBtn.classList.add('border-indigo-500', 'text-indigo-400');
+
+            // Update extra field label based on tab
+            const extraLabel = document.getElementById('label-extra');
+            if (tab === 'sold') extraLabel.innerText = 'Buyer Name / Remarks';
+            else if (tab === 'pending') extraLabel.innerText = 'Customer / Status Details';
+            else if (tab === 'vouches') extraLabel.innerText = 'Proof Link / Platform';
+            else extraLabel.innerText = 'Location / Notes';
+
+            renderTable();
+        }
+
+        function updateStats() {
+            document.getElementById('stat-onhand').innerText = db.onhand.length;
+            document.getElementById('stat-sold').innerText = db.sold.length;
+            document.getElementById('stat-pending').innerText = db.pending.length;
+            document.getElementById('stat-vouches').innerText = db.vouches.length;
+        }
+
+        function renderTable() {
+            const headers = document.getElementById('tableHeaders');
+            const tbody = document.getElementById('tableBody');
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+
+            let extraTitle = 'Notes';
+            if (currentTab === 'sold') extraTitle = 'Buyer';
+            if (currentTab === 'pending') extraTitle = 'Customer / Status';
+            if (currentTab === 'vouches') extraTitle = 'Proof Link';
+
+            headers.innerHTML = `
+                <th class="py-3 px-4">Item Name</th>
+                <th class="py-3 px-4">Qty / Details</th>
+                <th class="py-3 px-4">Price (₱)</th>
+                <th class="py-3 px-4">${extraTitle}</th>
+                <th class="py-3 px-4">Date</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+            `;
+
+            const items = db[currentTab] || [];
+            tbody.innerHTML = '';
+
+            const filtered = items.filter(item => 
+                item.name.toLowerCase().includes(searchVal) || 
+                item.extra.toLowerCase().includes(searchVal)
+            );
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-500">No records found.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach((item, index) => {
+                const originalIndex = items.indexOf(item);
+                let extraContent = item.extra;
+                if (currentTab === 'vouches' && item.extra.startsWith('http')) {
+                    extraContent = `<a href="${item.extra}" target="_blank" class="text-sky-400 hover:underline"><i class="fa-solid fa-link"></i> View Proof</a>`;
+                }
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-700/30 transition">
+                        <td class="py-3.5 px-4 font-medium text-slate-200">${item.name}</td>
+                        <td class="py-3.5 px-4">${item.qty}</td>
+                        <td class="py-3.5 px-4 font-semibold text-emerald-400">₱${Number(item.price).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                        <td class="py-3.5 px-4 text-slate-300">${extraContent}</td>
+                        <td class="py-3.5 px-4 text-slate-400 text-xs">${item.date}</td>
+                        <td class="py-3.5 px-4 text-right space-x-2">
+                            <button onclick="editRecord(${originalIndex})" class="text-slate-400 hover:text-indigo-400 p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deleteRecord(${originalIndex})" class="text-slate-400 hover:text-rose-400 p-1"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            updateStats();
+        }
+
+        function filterTable() {
+            renderTable();
+        }
+
+        function openModal(isEdit = false) {
+            document.getElementById('recordModal').classList.remove('hidden');
+            document.getElementById('recordModal').classList.add('flex');
+            if (!isEdit) {
+                document.getElementById('modalTitle').innerText = `Add New ${currentTab.slice(0,-1).toUpperCase()}`;
+                document.getElementById('recordForm').reset();
+                document.getElementById('editIndex').value = '';
+                document.getElementById('f-date').valueAsDate = new Date();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('recordModal').classList.remove('flex');
+            document.getElementById('recordModal').classList.add('hidden');
+        }
+
+        function saveRecord(e) {
+            e.preventDefault();
+            const editIdx = document.getElementById('editIndex').value;
+            const newItem = {
+                name: document.getElementById('f-name').value,
+                qty: document.getElementById('f-qty').value,
+                price: parseFloat(document.getElementById('f-price').value) || 0,
+                extra: document.getElementById('f-extra').value,
+                date: document.getElementById('f-date').value
+            };
+
+            if (editIdx === '') {
+                db[currentTab].push(newItem);
+            } else {
+                db[currentTab][editIdx] = newItem;
+            }
+
+            saveDataToStorage();
+            closeModal();
+        }
+
+        function editRecord(index) {
+            const item = db[currentTab][index];
+            document.getElementById('modalTitle').innerText = `Edit Record`;
+            document.getElementById('editIndex').value = index;
+            document.getElementById('f-name').value = item.name;
+            document.getElementById('f-qty').value = item.qty;
+            document.getElementById('f-price').value = item.price;
+            document.getElementById('f-extra').value = item.extra;
+            document.getElementById('f-date').value = item.date;
+            openModal(true);
+        }
+
+        function deleteRecord(index) {
+            if (confirm('Are you sure you want to delete this record?')) {
+                db[currentTab].splice(index, 1);
+                saveDataToStorage();
+            }
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "peony_tracker_backup.json");
+            dlAnchorElem.click();
+        }
+
+        // Initialize on load
+        window.onload = () => {
+            renderTable();
+        };
+    </script>
+</body>
+</html>
