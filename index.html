@@ -89,19 +89,21 @@
 
     <!-- ================= MAIN DASHBOARD (Hidden until logged in) ================= -->
     <div id="mainDashboard" class="hidden flex-col min-h-screen">
-        <!-- Header -->
+        <!-- Header - Fixed Responsive Layout for Mobile & PC -->
         <header class="glass-nav sticky top-0 z-40">
-            <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div class="flex items-center space-x-4">
-                    <img src="https://raw.githubusercontent.com/mainemail021415-coder/product-tracker/refs/heads/main/logo%20(2).png" alt="Shop Book Logo" class="h-14 sm:h-16 object-contain drop-shadow-[0_0_10px_rgba(244,114,182,0.5)]">
-                    <span class="bubble-glow-text text-lg sm:text-2xl tracking-wider uppercase">Monitorings</span>
+            <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+                <!-- Left: Logo & Monitorings -->
+                <div class="flex items-center space-x-3">
+                    <img src="https://raw.githubusercontent.com/mainemail021415-coder/product-tracker/refs/heads/main/logo%20(2).png" alt="Shop Book Logo" class="h-10 sm:h-14 object-contain drop-shadow-[0_0_10px_rgba(244,114,182,0.5)]">
+                    <span class="bubble-glow-text text-base sm:text-xl tracking-wider uppercase">Monitorings</span>
                 </div>
-                <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-                    <span id="adminBadge" class="bg-pink-950/60 border border-pink-500/30 text-pink-200 px-3 py-1.5 rounded-xl text-xs font-semibold hidden sm:inline-block"></span>
-                    <a href="https://t.me/peony03" target="_blank" class="bg-gradient-to-r from-sky-400 to-sky-500 hover:from-sky-500 hover:to-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center gap-2 shadow-md shadow-sky-500/30 border border-sky-300/30">
-                        <i class="fa-brands fa-telegram text-lg"></i> @peony03
+                <!-- Right: Admin Badge, Telegram & Logout -->
+                <div class="flex items-center gap-2 sm:gap-3 flex-wrap justify-end">
+                    <span id="adminBadge" class="bg-pink-950/60 border border-pink-500/30 text-pink-200 px-2.5 py-1.5 rounded-xl text-xs font-semibold"></span>
+                    <a href="https://t.me/peony03" target="_blank" class="bg-gradient-to-r from-sky-400 to-sky-500 hover:from-sky-500 hover:to-sky-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-1.5 shadow-md shadow-sky-500/30 border border-sky-300/30">
+                        <i class="fa-brands fa-telegram text-base"></i> @peony03
                     </a>
-                    <button onclick="handleLogout()" class="bg-rose-950/60 hover:bg-rose-900 text-rose-200 border border-rose-500/30 px-3 py-2 rounded-xl text-sm font-medium transition flex items-center gap-1.5" title="Logout">
+                    <button onclick="handleLogout()" class="bg-rose-950/60 hover:bg-rose-900 text-rose-200 border border-rose-500/30 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-1.5" title="Logout">
                         <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline">Logout</span>
                     </button>
                 </div>
