@@ -12,7 +12,6 @@
     <style>
         body { 
             font-family: 'Poppins', sans-serif;
-            /* Responsive background image with dark overlay */
             background: linear-gradient(to bottom, rgba(20, 10, 15, 0.7), rgba(30, 15, 22, 0.85)), 
                         url('https://raw.githubusercontent.com/mainemail021415-coder/product-tracker/refs/heads/main/bg.jpg') no-repeat center center fixed;
             background-size: cover;
@@ -20,7 +19,6 @@
             background-attachment: fixed;
         }
 
-        /* Glassmorphism & Glowing Pink Borders optimized for mobile & desktop */
         .glass-card {
             background: rgba(35, 20, 30, 0.75);
             backdrop-filter: blur(12px);
@@ -35,7 +33,6 @@
             box-shadow: 0 0 25px rgba(244, 114, 182, 0.4), inset 0 0 20px rgba(244, 114, 182, 0.1);
         }
 
-        /* Glowing Header/Footer Glass */
         .glass-nav {
             background: rgba(25, 12, 20, 0.85);
             backdrop-filter: blur(12px);
@@ -44,7 +41,6 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
 
-        /* Clean & Readable Glowing Bubble Font Style (Shadow removed) */
         .bubble-glow-text {
             font-weight: 800;
             color: #ffe4e6;
@@ -55,7 +51,6 @@
             letter-spacing: 1.5px;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: rgba(20, 10, 15, 0.5); }
         ::-webkit-scrollbar-thumb { background: rgba(244, 114, 182, 0.4); border-radius: 4px; }
@@ -68,16 +63,15 @@
     <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
         <div class="glass-card rounded-3xl w-full max-w-md p-8 shadow-2xl border border-pink-500/40 text-center space-y-6">
             <div class="flex justify-center">
-                <!-- Logo inside Login -->
                 <img src="https://raw.githubusercontent.com/mainemail021415-coder/product-tracker/refs/heads/main/logo%20(2).png" alt="Shop Book Logo" class="h-20 object-contain drop-shadow-[0_0_12px_rgba(244,114,182,0.6)]">
             </div>
             <div>
                 <h2 class="text-2xl font-bold tracking-wide text-pink-200">Admin Portal</h2>
-                <p class="text-xs text-pink-300/70 mt-1">Enter your password to access Shop Book</p>
+                <p class="text-xs text-pink-300/70 mt-1">Enter your unique admin password</p>
             </div>
             <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
                 <div>
-                    <label class="block text-xs font-medium text-pink-300/80 mb-1">Admin Password</label>
+                    <label class="block text-xs font-medium text-pink-300/80 mb-1">Password</label>
                     <div class="relative">
                         <input type="password" id="loginPassword" required placeholder="Enter password..." class="w-full bg-black/40 border border-pink-500/30 rounded-xl px-4 py-3 text-sm text-pink-100 placeholder-pink-300/40 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400 transition">
                     </div>
@@ -99,12 +93,11 @@
         <header class="glass-nav sticky top-0 z-40">
             <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center space-x-4">
-                    <!-- Website Logo Image -->
                     <img src="https://raw.githubusercontent.com/mainemail021415-coder/product-tracker/refs/heads/main/logo%20(2).png" alt="Shop Book Logo" class="h-14 sm:h-16 object-contain drop-shadow-[0_0_10px_rgba(244,114,182,0.5)]">
-                    <!-- Monitorings Glowing Text (Shadow Removed) -->
                     <span class="bubble-glow-text text-lg sm:text-2xl tracking-wider uppercase">Monitorings</span>
                 </div>
                 <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                    <span id="adminBadge" class="bg-pink-950/60 border border-pink-500/30 text-pink-200 px-3 py-1.5 rounded-xl text-xs font-semibold hidden sm:inline-block"></span>
                     <a href="https://t.me/peony03" target="_blank" class="bg-gradient-to-r from-sky-400 to-sky-500 hover:from-sky-500 hover:to-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center gap-2 shadow-md shadow-sky-500/30 border border-sky-300/30">
                         <i class="fa-brands fa-telegram text-lg"></i> @peony03
                     </a>
@@ -236,19 +229,37 @@
 
     <!-- Script Application Logic -->
     <script>
-        const ADMIN_PASSWORD = "peony03"; 
+        // ======= MULTI-ADMIN CONFIGURATION =======
+        // Dito mo ilalagay ang mga iba't ibang admin at ang kanilang kanya-kayang password at storage key:
+        const ADMIN_ACCOUNTS = {
+            "peony03": { name: "Admin Peony", storageKey: "shopbook_db_peony" },
+            "admin123": { name: "Admin Store 1", storageKey: "shopbook_db_store1" },
+            "manager99": { name: "Admin Manager", storageKey: "shopbook_db_manager" }
+            // Pwede kang magdagdag pa rito ng iba kung gusto mo!
+        };
+
+        let currentAdmin = null;
+        let db = { onhand: [], sold: [], pending: [], vouches: [] };
+        let currentTab = 'onhand';
 
         function handleLogin(e) {
             e.preventDefault();
-            const pass = document.getElementById('loginPassword').value;
+            const pass = document.getElementById('loginPassword').value.trim();
             const errorEl = document.getElementById('loginError');
 
-            if (pass === ADMIN_PASSWORD) {
-                sessionStorage.setItem('peony_admin_logged', 'true');
+            if (ADMIN_ACCOUNTS[pass]) {
+                currentAdmin = ADMIN_ACCOUNTS[pass];
+                sessionStorage.setItem('shopbook_current_password', pass);
+                
+                // Load specific database for this admin
+                loadAdminDatabase();
+                
                 document.getElementById('loginScreen').classList.add('hidden');
                 const mainDash = document.getElementById('mainDashboard');
                 mainDash.classList.remove('hidden');
                 mainDash.classList.add('flex');
+                
+                document.getElementById('adminBadge').innerText = `👤 ${currentAdmin.name}`;
                 renderTable();
             } else {
                 errorEl.classList.remove('hidden');
@@ -256,41 +267,46 @@
             }
         }
 
+        function loadAdminDatabase() {
+            if (!currentAdmin) return;
+            let savedData = localStorage.getItem(currentAdmin.storageKey);
+            if (savedData) {
+                db = JSON.parse(savedData);
+            } else {
+                // Default starter data if empty
+                db = {
+                    onhand: [{ name: 'Sample Item A', qty: '10 pcs', price: 250, extra: 'Main Stock', date: '2026-10-27' }],
+                    sold: [{ name: 'Sample Item B', qty: '2 pcs', price: 500, extra: 'Juan Dela Cruz', date: '2026-10-26' }],
+                    pending: [{ name: 'Sample Item C', qty: '1 pc', price: 350, extra: 'Maria Santos', date: '2026-10-27' }],
+                    vouches: [{ name: 'Legit Seller Vouch', qty: 'Fast Deal', price: 0, extra: 'https://t.me/peony03', date: '2026-10-25' }]
+                };
+                saveDataToStorage();
+            }
+        }
+
         function handleLogout() {
-            sessionStorage.removeItem('peony_admin_logged');
+            sessionStorage.removeItem('shopbook_current_password');
             location.reload();
         }
 
         window.onload = () => {
-            const isLogged = sessionStorage.getItem('peony_admin_logged');
-            if (isLogged === 'true') {
+            const savedPass = sessionStorage.getItem('shopbook_current_password');
+            if (savedPass && ADMIN_ACCOUNTS[savedPass]) {
+                currentAdmin = ADMIN_ACCOUNTS[savedPass];
+                loadAdminDatabase();
                 document.getElementById('loginScreen').classList.add('hidden');
                 const mainDash = document.getElementById('mainDashboard');
                 mainDash.classList.remove('hidden');
                 mainDash.classList.add('flex');
+                document.getElementById('adminBadge').innerText = `👤 ${currentAdmin.name}`;
                 renderTable();
             }
         };
 
-        let currentTab = 'onhand';
-        
-        let db = JSON.parse(localStorage.getItem('peony_tracker_db')) || {
-            onhand: [
-                { name: 'Sample Item A', qty: '10 pcs', price: 250, extra: 'Main Stock', date: '2026-10-27' }
-            ],
-            sold: [
-                { name: 'Sample Item B', qty: '2 pcs', price: 500, extra: 'Juan Dela Cruz', date: '2026-10-26' }
-            ],
-            pending: [
-                { name: 'Sample Item C', qty: '1 pc', price: 350, extra: 'Maria Santos (Deposit Paid)', date: '2026-10-27' }
-            ],
-            vouches: [
-                { name: 'Legit Seller Vouch', qty: 'Fast Deal', price: 0, extra: 'https://t.me/peony03', date: '2026-10-25' }
-            ]
-        };
-
         function saveDataToStorage() {
-            localStorage.setItem('peony_tracker_db', JSON.stringify(db));
+            if (currentAdmin) {
+                localStorage.setItem(currentAdmin.storageKey, JSON.stringify(db));
+            }
             renderTable();
             updateStats();
         }
@@ -442,7 +458,7 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
             const dlAnchorElem = document.createElement('a');
             dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", "shop_book_backup.json");
+            dlAnchorElem.setAttribute("download", `shop_book_${currentAdmin.storageKey}.json`);
             dlAnchorElem.click();
         }
     </script>
