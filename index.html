@@ -230,12 +230,9 @@
     <!-- Script Application Logic -->
     <script>
         // ======= MULTI-ADMIN CONFIGURATION =======
-        // Dito mo ilalagay ang mga iba't ibang admin at ang kanilang kanya-kayang password at storage key:
         const ADMIN_ACCOUNTS = {
             "peony03": { name: "Admin Peony", storageKey: "shopbook_db_peony" },
-            "admin123": { name: "Admin Store 1", storageKey: "shopbook_db_store1" },
-            "manager99": { name: "Admin Manager", storageKey: "shopbook_db_manager" }
-            // Pwede kang magdagdag pa rito ng iba kung gusto mo!
+            "happysky15": { name: "Admin HappySky", storageKey: "shopbook_db_happysky15" }
         };
 
         let currentAdmin = null;
@@ -251,7 +248,6 @@
                 currentAdmin = ADMIN_ACCOUNTS[pass];
                 sessionStorage.setItem('shopbook_current_password', pass);
                 
-                // Load specific database for this admin
                 loadAdminDatabase();
                 
                 document.getElementById('loginScreen').classList.add('hidden');
@@ -273,7 +269,6 @@
             if (savedData) {
                 db = JSON.parse(savedData);
             } else {
-                // Default starter data if empty
                 db = {
                     onhand: [{ name: 'Sample Item A', qty: '10 pcs', price: 250, extra: 'Main Stock', date: '2026-10-27' }],
                     sold: [{ name: 'Sample Item B', qty: '2 pcs', price: 500, extra: 'Juan Dela Cruz', date: '2026-10-26' }],
